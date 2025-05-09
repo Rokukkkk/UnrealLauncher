@@ -97,6 +97,23 @@ public partial class MainWindow : Window
         }
     }
 
+    private void MenuItem_SwitchUEVersion_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var args = Search.GetUnrealProjectContextMenuFromRegedit(out var execCode1);
+        if (execCode1 != ExecCode.Success)
+        {
+            _ = PopMessageBox($"execCode: {execCode1}");
+            return;
+        }
+
+        var command = args.Item2;
+        FileOps.OpenWithArgs(command, GetSelectedItemPath(), out var execCode2);
+        if (execCode2 != ExecCode.Success)
+        {
+            _ = PopMessageBox($"execCode: {execCode2}");
+        }
+    }
+
     private void MenuItem_Clear_OnClick(object? sender, RoutedEventArgs e)
     {
         FileOps.DeleteIntermediate(GetSelectedItemPath(), out var execCode);

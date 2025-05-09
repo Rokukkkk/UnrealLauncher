@@ -210,7 +210,7 @@
                             <MenuItem Header="Open in File Explorer" Click="MenuItem_OpenInExplorer_OnClick" />
                             <Separator />
                             <MenuItem Header="Generate VS project files" Click="MenuItem_GenerateVS_OnClick" />
-                            <MenuItem Header="Switch Unreal Engine version..." />
+                            <MenuItem Header="Switch Unreal Engine version..." Click="MenuItem_SwitchUEVersion_OnClick"/>
                             <Separator />
                             <MenuItem Header="Clear all intermediate files" Click="MenuItem_Clear_OnClick" />
                             <MenuItem Header="Delete" Click="MenuItem_Delete_OnClick" Foreground="Red" />
