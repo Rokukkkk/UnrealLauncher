@@ -1,0 +1,71 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        Width="400" Height="200" CanResize="False" WindowStartupLocation="CenterScreen"
+        x:Class="UnrealLauncher.MessageBox"
+        Title="MessageBox" Background="{StaticResource Background0Color}"
+        ExtendClientAreaToDecorationsHint="True" ShowInTaskbar="False"
+        ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="-1">
+
+    <StackPanel>
+        <Panel>
+            <Button Width="46"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    CornerRadius="0"
+                    Tapped="InputElement_CloseWindow_OnTapped">
+
+                <Button.Styles>
+                    <Style Selector="Button:pointerover ContentPresenter">
+                        <Setter Property="Background" Value="Red" />
+                    </Style>
+                    <Style Selector="Button:not(:pointerover) ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="Button:pointerover > Path">
+                        <Setter Property="Fill" Value="White" />
+                    </Style>
+                    <Style Selector="Button:not(:pointerover) > Path">
+                        <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                    </Style>
+                </Button.Styles>
+                <Path Margin="10,2,10,2"
+                      Stretch="Uniform"
+                      Data="M1169 1024l879 -879l-145 -145l-879 879l-879 -879l-145 145l879 879l-879 879l145 145l879 -879l879 879l145 -145z">
+                </Path>
+            </Button>
+            <TextBlock x:Name="TopBarText" Text="Error"
+                       Margin="10,6,10,5" FontSize="12.5"
+                       Foreground="{StaticResource SubFontColor}" />
+        </Panel>
+        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
+
+        <StackPanel Margin="20" Spacing="10">
+            <StackPanel.Styles>
+                <Style Selector="TextBox">
+                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
+                </Style>
+                <Style Selector="TextBox:focus Border">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
+                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
+                </Style>
+                <Style Selector="TextBox:pointerover Border">
+                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
+                </Style>
+            </StackPanel.Styles>
+
+            <TextBlock Text="Error occured:" />
+            <TextBox x:Name="ErrorMessage" Text="Error Message" Height="54" FontSize="10"
+                     IsReadOnly="True" IsTabStop="False" BorderThickness="0" />
+
+            <Button Content="Close" Tapped="InputElement_CloseWindow_OnTapped" FontSize="12"
+                    Background="{StaticResource ButtonBackground}"
+                    HorizontalAlignment="Center" Margin="10" Padding="10,4" />
+        </StackPanel>
+    </StackPanel>
+
+</Window>

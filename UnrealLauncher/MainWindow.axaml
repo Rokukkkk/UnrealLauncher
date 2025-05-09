@@ -1,0 +1,244 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ic="using:FluentIcons.Avalonia"
+        xmlns:unrealLauncher="clr-namespace:UnrealLauncher"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="UnrealLauncher.MainWindow"
+        WindowStartupLocation="CenterScreen"
+        Width="1000" Height="560"
+        MinWidth="1000" MinHeight="560"
+        Title="UnrealLauncher" Background="{StaticResource Background0Color}"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1">
+
+    <Panel>
+        <Border x:Name="Overlay"
+                Background="{StaticResource BackgroundTransparentColor}"
+                ZIndex="999" Margin="0,32,0,0" Opacity="0" IsHitTestVisible="False"
+                Tapped="InputElement_Overlay_OnTapped">
+            <Border.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                </Transitions>
+            </Border.Transitions>
+
+            <Border Background="{StaticResource Background0Color}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="500" Height="200"
+                    Tapped="InputElement_Messagebox_OnTapped">
+                <Border.Styles>
+                    <Style Selector="Border">
+                        <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="CornerRadius" Value="6" />
+                    </Style>
+                </Border.Styles>
+
+                <Grid Margin="24" RowDefinitions="Auto,10,Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="Remove the project?" FontSize="18" />
+                    <TextBlock Grid.Row="2" Text="This will delete all the files inside the project folder."
+                               FontSize="16"
+                               Foreground="{StaticResource SubFontColor}" />
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="20" HorizontalAlignment="Right">
+                        <StackPanel.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+                                <Setter Property="Padding" Value="12,8,12,8" />
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Style>
+                            <Style Selector="Button:pointerover ContentPresenter">
+                                <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+                            </Style>
+                        </StackPanel.Styles>
+
+                        <Button Content="Cancel" Tapped="InputElement_ButtonClose_OnTapped" />
+                        <Button Content="Delete" Tapped="InputElement_ButtonDelete_OnTapped"
+                                Foreground="Red" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+
+        <DockPanel>
+            <TextBlock Text="Unreal Launcher" FontSize="12.5" Padding="10,10,0,0" DockPanel.Dock="Top"
+                       Background="{StaticResource Background0Color}"
+                       Foreground="{StaticResource SubFontColor}"
+                       Height="32" FontWeight="SemiBold" IsHitTestVisible="False" ZIndex="999" />
+            <Border DockPanel.Dock="Top" Background="{StaticResource SeparatorColor}" Height="0.1" />
+
+            <Grid DockPanel.Dock="Left" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto"
+                  Background="{StaticResource Background1Color}">
+                <Grid Grid.Row="0" Background="{StaticResource Background1Color}" Height="70">
+                    <Grid.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Cursor" Value="Hand" />
+                        </Style>
+                        <Style Selector="Button:pointerover ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <Style Selector="Button:pressed ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <Style Selector="Button ic|FluentIcon">
+                            <Setter Property="Foreground" Value="{StaticResource SubFontColor}" />
+                        </Style>
+                        <Style Selector="Button:pressed ic|FluentIcon">
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </Grid.Styles>
+                    <Button VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"
+                            Tapped="InputElement_Refresh_OnTapped">
+                        <ic:FluentIcon Icon="ArrowSync" IconVariant="Filled"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    </Button>
+                </Grid>
+                <Border Grid.Row="1" Background="{StaticResource SeparatorColor}" Height="0.1" />
+                <ListBox Grid.Row="2" Padding="16" Background="Transparent" SelectionMode="AlwaysSelected">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem:selected ContentPresenter">
+                            <Setter Property="Background" Value="{StaticResource Background2Color}" />
+                            <Setter Property="CornerRadius" Value="6" />
+                        </Style>
+                        <Style Selector="ListBoxItem:pointerover  ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pointerover ContentPresenter">
+                            <Setter Property="Background" Value="{StaticResource Background2Color}" />
+                        </Style>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Margin" Value="10,2,10,2" />
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="Width" Value="140" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="Cursor" Value="Hand" />
+                        </Style>
+                        <Style Selector="ListBoxItem StackPanel">
+                            <Setter Property="Orientation" Value="Horizontal" />
+                            <Setter Property="Spacing" Value="8" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                        <Style Selector="ListBoxItem StackPanel ic|FluentIcon">
+                            <Setter Property="Margin" Value="0,2,0,0" />
+                            <Setter Property="IconVariant" Value="Filled" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                        <Style Selector="ListBoxItem StackPanel TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </ListBox.Styles>
+
+                    <ListBoxItem>
+                        <StackPanel>
+                            <ic:FluentIcon Icon="Box" />
+                            <TextBlock Text="Projects" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <!-- <ListBoxItem> -->
+                    <!--     <StackPanel> -->
+                    <!--         <ic:FluentIcon Icon="Folder" /> -->
+                    <!--         <TextBlock Text="Assets" /> -->
+                    <!--     </StackPanel> -->
+                    <!-- </ListBoxItem> -->
+                </ListBox>
+
+                <Border Grid.Row="4" Background="{StaticResource SeparatorColor}" Height="0.1" />
+                <Grid Grid.Row="5" Background="{StaticResource Background1Color}" Height="40">
+                    <TextBlock Text="Ver. 0.0.1" VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Margin="0,0,20,0"
+                               Foreground="{StaticResource SubFontColor}" FontSize="12" />
+                </Grid>
+            </Grid>
+
+            <Border DockPanel.Dock="Left" Background="{StaticResource SeparatorColor}" Width="0.1" />
+
+            <TextBlock Text="Projects" DockPanel.Dock="Top" Margin="28,28,0,56" FontSize="28" />
+
+            <Border DockPanel.Dock="Top" Background="{StaticResource SeparatorColor}" Height="0.1" />
+            <Border DockPanel.Dock="Top" Background="{StaticResource Background1Color}" Height="40">
+                <!-- Under development -->
+            </Border>
+            <Border DockPanel.Dock="Top" Background="{StaticResource SeparatorColor}" Height="0.1" />
+
+            <Grid RowDefinitions="Auto,*">
+                <ListBox Grid.Row="1" x:Name="ProjectsListBox" DoubleTapped="ProjectsListBox_OnDoubleTapped"
+                         Background="Transparent" Padding="12">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Margin" Value="0,2" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected ContentPresenter">
+                            <Setter Property="Background" Value="#303030" />
+                            <Setter Property="CornerRadius" Value="6" />
+                        </Style>
+                        <Style Selector="ListBoxItem:pointerover ContentPresenter">
+                            <Setter Property="Background" Value="{StaticResource Background1Color}" />
+                            <Setter Property="CornerRadius" Value="6" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pointerover ContentPresenter">
+                            <Setter Property="Background" Value="#303030" />
+                        </Style>
+                    </ListBox.Styles>
+
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <ContextMenu.Styles>
+                                <Style Selector="ContextMenu">
+                                    <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
+                                    <Setter Property="Width" Value="280" />
+                                </Style>
+                                <Style Selector="Separator">
+                                    <Setter Property="Background" Value="{StaticResource SeparatorColor}" />
+                                    <Setter Property="Margin" Value="2,3" />
+                                </Style>
+                                <Style Selector="MenuItem">
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="CornerRadius" Value="6" />
+                                    <Setter Property="Margin" Value="6,2" />
+                                    <Setter Property="Padding" Value="5" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Style>
+                            </ContextMenu.Styles>
+
+                            <MenuItem Header="Open" Click="MenuItem_Open_OnClick" />
+                            <MenuItem Header="Open in File Explorer" Click="MenuItem_OpenInExplorer_OnClick" />
+                            <Separator />
+                            <MenuItem Header="Generate VS project files" Click="MenuItem_GenerateVS_OnClick" />
+                            <MenuItem Header="Switch Unreal Engine version..." />
+                            <Separator />
+                            <MenuItem Header="Clear all intermediate files" Click="MenuItem_Clear_OnClick" />
+                            <MenuItem Header="Delete" Click="MenuItem_Delete_OnClick" Foreground="Red" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="unrealLauncher:UnrealProject">
+                            <Grid ColumnDefinitions="Auto,20,*,20,Auto">
+                                <Border Grid.Column="0" CornerRadius="6" ClipToBounds="True">
+                                    <Image Height="50" Width="50" Stretch="UniformToFill"
+                                           Source="{Binding Thumbnail}" VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding UProjectName}" Foreground="White" />
+                                    <TextBlock Text="{Binding UProjectPath}" Foreground="#A5A5A5" />
+                                </StackPanel>
+                                <Border Grid.Column="4" Width="80" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding LastAccessDate}"
+                                               Foreground="#A5A5A5" HorizontalAlignment="Left" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </Grid>
+        </DockPanel>
+    </Panel>
+
+</Window>
