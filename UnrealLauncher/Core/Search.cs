@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Microsoft.Win32;
 
 namespace UnrealLauncher.Core;
 
-public enum ExecCode
-{
-    Success = 0,
-    FileNotFound = 1,
-    NotWindows = 2,
-    RegeditNotFound = 3,
-    PathIsNull = 4,
-    FileOccupying = 5,
-    UEisRunning = 6
-}
-
 public static partial class Search
 {
+    public class UnrealProject(string thumbnailPath, string uProjectPath)
+    {
+        public Bitmap Thumbnail { get; } = thumbnailPath == UnrealNoPicFoundImagePath ? new Bitmap(AssetLoader.Open(new Uri(thumbnailPath))) : new Bitmap(thumbnailPath);
+        public string UProjectPath { get; } = uProjectPath;
+        public string UProjectName { get; } = FileOps.GetFileNameWithoutExtension(uProjectPath);
+        public string LastAccessDate { get; } = FileOps.GetLastAccessTime(uProjectPath);
+    }
+
     private static readonly string UnrealAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UnrealEngine");
     private static readonly string UnrealEditorSettingsPath = Path.Combine("Saved", "Config", "WindowsEditor", "EditorSettings.ini");
-    public const string UnrealNoPicFoundImagePath = "avares://UnrealLauncher/Assets/no_pic.png";
+    private const string UnrealNoPicFoundImagePath = "avares://UnrealLauncher/Assets/no_pic.png";
 
     private static IEnumerable<string> GetEngineVersionList()
     {
@@ -43,39 +43,12 @@ public static partial class Search
         return UnrealNoPicFoundImagePath;
     }
 
-    public static (string, string) GetUnrealProjectContextMenuFromRegedit(out ExecCode execCode)
-    {
-        if (!OperatingSystem.IsWindows())
-        {
-            execCode = ExecCode.NotWindows;
-            return (string.Empty, string.Empty);
-        }
-
-        const string keyPath1 = @"Unreal.ProjectFile\shell\rungenproj\command";
-        const string keyPath2 = @"Unreal.ProjectFile\shell\switchversion\command";
-
-        using var commandKey1 = Registry.ClassesRoot.OpenSubKey(keyPath1);
-        using var commandKey2 = Registry.ClassesRoot.OpenSubKey(keyPath2);
-
-        if (commandKey1 == null || commandKey2 == null)
-        {
-            execCode = ExecCode.RegeditNotFound;
-            return (string.Empty, string.Empty);
-        }
-
-        var command1 = commandKey1.GetValue(null) as string ?? string.Empty;
-        var command2 = commandKey2.GetValue(null) as string ?? string.Empty;
-
-        execCode = ExecCode.Success;
-        return (command1, command2);
-    }
-
-    public static void SortByDate(List<UnrealProject> list)
+    private static void SortByDate(List<UnrealProject> list)
     {
         list.Sort((a, b) => string.Compare(b.LastAccessDate, a.LastAccessDate, StringComparison.Ordinal));
     }
 
-    public static void GetAllRecentlyOpenedProjects(List<UnrealProject> unrealProjectsList)
+    private static void GetAllRecentlyOpenedProjects(List<UnrealProject> unrealProjectsList)
     {
         List<string> editorSettingsPathList = [];
 
@@ -100,6 +73,78 @@ public static partial class Search
                     ));
             }
         }
+    }
+
+    public static void RefreshListBox(ListBox projectListBox)
+    {
+        List<UnrealProject> urealProjectsList = [];
+
+        GetAllRecentlyOpenedProjects(urealProjectsList);
+        SortByDate(urealProjectsList);
+
+        projectListBox.ItemsSource = urealProjectsList;
+    }
+
+    public static string GetSelectedProjectPath(ListBox projectsListBox)
+    {
+        return projectsListBox.SelectedItem != null ? ((UnrealProject)projectsListBox.SelectedItem).UProjectPath : string.Empty;
+    }
+
+    public static ExecResult<(string, string)> GetUnrealProjectContextMenuFromRegedit()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return ExecResult<(string, string)>.Failed(ExecCode.SystemNotWindows);
+        }
+
+        const string keyPath1 = @"Unreal.ProjectFile\shell\rungenproj\command";
+        const string keyPath2 = @"Unreal.ProjectFile\shell\switchversion\command";
+
+        using var commandKey1 = Registry.ClassesRoot.OpenSubKey(keyPath1);
+        using var commandKey2 = Registry.ClassesRoot.OpenSubKey(keyPath2);
+
+        if (commandKey1 == null || commandKey2 == null)
+        {
+            return ExecResult<(string, string)>.Failed(ExecCode.RegeditNotFound);
+        }
+
+        var command1 = commandKey1.GetValue(null) as string ?? string.Empty;
+        var command2 = commandKey2.GetValue(null) as string ?? string.Empty;
+
+        return ExecResult<(string, string)>.Success((command1, command2));
+    }
+
+    public static ExecResult<string> GetInstalledUnrealFromRegedit()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return ExecResult<string>.Failed(ExecCode.SystemNotWindows);
+        }
+
+        const string keyPath = @"SOFTWARE\EpicGames\Unreal Engine";
+
+        using var baseKey = Registry.LocalMachine.OpenSubKey(keyPath);
+
+        if (baseKey == null)
+        {
+            return ExecResult<string>.Failed(ExecCode.RegeditNotFound);
+        }
+
+        // Sort the version number, always using the newest version
+        var subKeys = baseKey.GetSubKeyNames();
+        Array.Sort(subKeys, (a, b) => new Version(b).CompareTo(new Version(a)));
+
+        // Get the UnrealEditor.exe path from the key value
+        using var subKeyValue = Registry.LocalMachine.OpenSubKey(Path.Combine(keyPath, subKeys[0]));
+        if (subKeyValue == null)
+        {
+            return ExecResult<string>.Failed(ExecCode.RegeditNotFound);
+        }
+
+        var installedDirectoryPath = subKeyValue.GetValue("InstalledDirectory") as string ?? string.Empty;
+        var unrealEditorPath = Path.Combine(installedDirectoryPath, "Engine", "Binaries", "Win64", "UnrealEditor.exe");
+
+        return ExecResult<string>.Success(unrealEditorPath);
     }
 
 

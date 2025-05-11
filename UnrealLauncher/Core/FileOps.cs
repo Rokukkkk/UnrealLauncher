@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -6,103 +7,121 @@ namespace UnrealLauncher.Core;
 
 public static class FileOps
 {
-    public static void OpenProject(string? path, out ExecCode execCode)
+    public static ExecResult<Void> OpenProject(string? path)
     {
         if (path == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
-        execCode = ExecCode.Success;
         Process.Start(new ProcessStartInfo(path)
         {
             UseShellExecute = true
         });
+
+        return ExecResult<Void>.Success();
     }
 
-    public static void OpenInExplorer(string? path, out ExecCode execCode)
+    public static ExecResult<Void> OpenInExplorer(string? path)
     {
         if (path == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
-        execCode = ExecCode.Success;
         Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{path.Replace('/', '\\')}\"")
         {
             UseShellExecute = true
         });
+
+        return ExecResult<Void>.Success();
     }
 
-    public static void OpenWithArgs(string? command, string unrealProjectPath, out ExecCode execCode)
+    public static ExecResult<Void> OpenWithArgs(string? command, string unrealProjectPath)
     {
         if (command == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
         var firstQuoteEnd = command.IndexOf('"', 1);
         var exePath = command.Substring(1, firstQuoteEnd - 1);
         var argumentsTemplate = command[(firstQuoteEnd + 1)..].Trim();
 
-        execCode = ExecCode.Success;
         Process.Start(new ProcessStartInfo
         {
             FileName = exePath,
             Arguments = argumentsTemplate.Replace("%1", unrealProjectPath),
             UseShellExecute = false
         });
+
+        return ExecResult<Void>.Success();
     }
 
-    public static void DeleteProject(string? path, out ExecCode execCode)
+    public static ExecResult<Void> OpenWithOutArgs(string? command)
+    {
+        if (command == null)
+        {
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = command,
+            UseShellExecute = true
+        });
+
+        return ExecResult<Void>.Success();
+    }
+
+    public static ExecResult<Void> DeleteProject(string? path)
     {
         if (path == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
         if (Process.GetProcessesByName("UnrealEditor").Length != 0)
         {
-            execCode = ExecCode.UEisRunning;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.UnrealIsRunning);
         }
 
         var directoryPath = Path.GetDirectoryName(path);
         if (directoryPath == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
         try
         {
             Directory.Delete(directoryPath, recursive: true);
         }
+        catch (FileNotFoundException)
+        {
+            return ExecResult<Void>.Failed(ExecCode.FileNotFound);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return ExecResult<Void>.Failed(ExecCode.FileAccessDenied);
+        }
         catch (IOException)
         {
-            execCode = ExecCode.FileOccupying;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.FileIsOccupying);
         }
 
-        execCode = ExecCode.Success;
+        return ExecResult<Void>.Success();
     }
 
-    public static void DeleteIntermediate(string? path, out ExecCode execCode)
+    public static ExecResult<Void> DeleteIntermediate(string? path)
     {
         if (path == null)
         {
-            execCode = ExecCode.PathIsNull;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.PathIsNull);
         }
 
         if (Process.GetProcessesByName("UnrealEditor").Length != 0)
         {
-            execCode = ExecCode.UEisRunning;
-            return;
+            return ExecResult<Void>.Failed(ExecCode.UnrealIsRunning);
         }
 
         var directoryPath = Path.GetDirectoryName(path);
@@ -139,13 +158,18 @@ public static class FileOps
             hasError = true;
         }
 
-        if (hasError)
-        {
-            execCode = ExecCode.FileNotFound;
-            return;
-        }
+        return hasError ? ExecResult<Void>.Failed(ExecCode.FileNotFound) : ExecResult<Void>.Success();
+    }
 
-        execCode = ExecCode.Success;
+    public static void HandleOpenFolder(string? path)
+    {
+        if (path == null) return;
+
+        var projectName = Path.GetFileName(Path.GetDirectoryName(path));
+        Process.Start(new ProcessStartInfo(Path.Combine(path, projectName + ".uproject"))
+        {
+            UseShellExecute = true
+        });
     }
 
     public static string GetFileNameWithoutExtension(string path)

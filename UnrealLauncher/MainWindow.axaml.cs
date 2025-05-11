@@ -1,23 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using UnrealLauncher.Core;
 
-
 namespace UnrealLauncher;
-
-public class UnrealProject(string thumbnailPath, string uProjectPath)
-{
-    public Bitmap Thumbnail { get; } = thumbnailPath == Search.UnrealNoPicFoundImagePath ? new Bitmap(AssetLoader.Open(new Uri(thumbnailPath))) : new Bitmap(thumbnailPath);
-    public string UProjectPath { get; } = uProjectPath;
-    public string UProjectName { get; } = FileOps.GetFileNameWithoutExtension(uProjectPath);
-    public string LastAccessDate { get; } = FileOps.GetLastAccessTime(uProjectPath);
-}
 
 public partial class MainWindow : Window
 {
@@ -25,42 +11,21 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        RefreshListBox();
-    }
-
-    private void RefreshListBox()
-    {
-        List<UnrealProject> urealProjectsList = [];
-
-        Search.GetAllRecentlyOpenedProjects(urealProjectsList);
-        Search.SortByDate(urealProjectsList);
-
-        ProjectsListBox.ItemsSource = urealProjectsList;
-    }
-
-    private string GetSelectedItemPath()
-    {
-        return ProjectsListBox.SelectedItem != null ? ((UnrealProject)ProjectsListBox.SelectedItem).UProjectPath : string.Empty;
+        Search.RefreshListBox(ProjectsListBox);
     }
 
     private void ProjectsListBox_OnDoubleTapped(object? sender, TappedEventArgs e)
     {
-        FileOps.OpenProject(GetSelectedItemPath(), out var execCode);
-        if (execCode != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode}");
-        }
+        Try(FileOps.OpenProject(Search.GetSelectedProjectPath(ProjectsListBox)), out _);
 
         ProjectsListBox.SelectedItem = null;
     }
 
     private void MenuItem_Open_OnClick(object? sender, RoutedEventArgs e)
     {
-        FileOps.OpenProject(GetSelectedItemPath(), out var execCode);
-        if (execCode != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode}");
-        }
+        Try(FileOps.OpenProject(Search.GetSelectedProjectPath(ProjectsListBox)), out _);
+
+        ProjectsListBox.SelectedItem = null;
     }
 
     private void MenuItem_Delete_OnClick(object? sender, RoutedEventArgs e)
@@ -71,58 +36,40 @@ public partial class MainWindow : Window
 
     private void MenuItem_OpenInExplorer_OnClick(object? sender, RoutedEventArgs e)
     {
-        FileOps.OpenInExplorer(GetSelectedItemPath(), out var execCode);
-        if (execCode != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode}");
-        }
+        Try(FileOps.OpenInExplorer(Search.GetSelectedProjectPath(ProjectsListBox)), out _);
 
         ProjectsListBox.SelectedItem = null;
     }
 
     private void MenuItem_GenerateVS_OnClick(object? sender, RoutedEventArgs e)
     {
-        var args = Search.GetUnrealProjectContextMenuFromRegedit(out var execCode1);
-        if (execCode1 != ExecCode.Success)
+        if (!Try(Search.GetUnrealProjectContextMenuFromRegedit(), out var value))
         {
-            _ = PopMessageBox($"execCode: {execCode1}");
             return;
         }
 
-        var command = args.Item1;
-        FileOps.OpenWithArgs(command, GetSelectedItemPath(), out var execCode2);
-        if (execCode2 != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode2}");
-        }
+        var command = value.Item1;
+
+        Try(FileOps.OpenWithArgs(command, Search.GetSelectedProjectPath(ProjectsListBox)), out _);
     }
 
     private void MenuItem_SwitchUEVersion_OnClick(object? sender, RoutedEventArgs e)
     {
-        var args = Search.GetUnrealProjectContextMenuFromRegedit(out var execCode1);
-        if (execCode1 != ExecCode.Success)
+        if (!Try(Search.GetUnrealProjectContextMenuFromRegedit(), out var value))
         {
-            _ = PopMessageBox($"execCode: {execCode1}");
             return;
         }
 
-        var command = args.Item2;
-        FileOps.OpenWithArgs(command, GetSelectedItemPath(), out var execCode2);
-        if (execCode2 != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode2}");
-        }
+        var command = value.Item2;
+
+        Try(FileOps.OpenWithArgs(command, Search.GetSelectedProjectPath(ProjectsListBox)), out _);
     }
 
     private void MenuItem_Clear_OnClick(object? sender, RoutedEventArgs e)
     {
-        FileOps.DeleteIntermediate(GetSelectedItemPath(), out var execCode);
-        if (execCode != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode}");
-        }
+        Try(FileOps.DeleteIntermediate(Search.GetSelectedProjectPath(ProjectsListBox)), out _);
 
-        RefreshListBox();
+        Search.RefreshListBox(ProjectsListBox);
     }
 
     private void InputElement_Overlay_OnTapped(object? sender, TappedEventArgs e)
@@ -144,26 +91,44 @@ public partial class MainWindow : Window
 
     private void InputElement_ButtonDelete_OnTapped(object? sender, TappedEventArgs e)
     {
-        FileOps.DeleteProject(GetSelectedItemPath(), out var execCode);
-        if (execCode != ExecCode.Success)
-        {
-            _ = PopMessageBox($"execCode: {execCode}");
-        }
+        Try(FileOps.DeleteProject(Search.GetSelectedProjectPath(ProjectsListBox)), out _);
 
         Overlay.Opacity = 0;
         Overlay.IsHitTestVisible = false;
 
-        RefreshListBox();
+        Search.RefreshListBox(ProjectsListBox);
     }
 
     private void InputElement_Refresh_OnTapped(object? sender, TappedEventArgs e)
     {
-        RefreshListBox();
+        Search.RefreshListBox(ProjectsListBox);
     }
 
-    private async Task PopMessageBox(string message)
+    private void InputElement_AddProject_OnTapped(object? sender, TappedEventArgs e)
     {
-        var messageBox = new MessageBox(message);
-        await messageBox.ShowDialog(this);
+        WindowHelper.OpenFolderPickerAsync(this, FileOps.HandleOpenFolder);
+    }
+
+    private void InputElement_NewProject_OnTapped(object? sender, TappedEventArgs e)
+    {
+        if (!Try(Search.GetInstalledUnrealFromRegedit(), out var value))
+        {
+            return;
+        }
+
+        Try(FileOps.OpenWithOutArgs(value), out _);
+    }
+
+    private bool Try<T>(ExecResult<T> result, out T value)
+    {
+        if (!result.IsSuccess)
+        {
+            _ = WindowHelper.PopMessageBox(this, $"ErrCode: {result.ExecCode}");
+            value = default!;
+            return false;
+        }
+
+        value = result.Data;
+        return true;
     }
 }
