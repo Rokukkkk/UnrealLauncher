@@ -3,25 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Microsoft.Win32;
 
 namespace UnrealLauncher.Core;
 
 public static partial class Search
 {
-    public class UnrealProject(string thumbnailPath, string uProjectPath)
+    public class UnrealProject(string thumbnailPath, string uProjectPath, string lastAccessDate)
     {
-        public Bitmap Thumbnail { get; } = thumbnailPath == UnrealNoPicFoundImagePath ? new Bitmap(AssetLoader.Open(new Uri(thumbnailPath))) : new Bitmap(thumbnailPath);
+        public string ThumbnailPath { get; } = thumbnailPath;
         public string UProjectPath { get; } = uProjectPath;
         public string UProjectName { get; } = FileOps.GetFileNameWithoutExtension(uProjectPath);
-        public string LastAccessDate { get; } = FileOps.GetLastAccessTime(uProjectPath);
+        public string LastAccessDate { get; } = lastAccessDate;
     }
 
     private static readonly string UnrealAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UnrealEngine");
-    private static readonly string UnrealEditorSettingsPath = Path.Combine("Saved", "Config", "WindowsEditor", "EditorSettings.ini");
+    private const string UnrealEditorSettingsPath = "Saved/Config/WindowsEditor/EditorSettings.ini";
     private const string UnrealNoPicFoundImagePath = "avares://UnrealLauncher/Assets/no_pic.png";
 
     private static IEnumerable<string> GetEngineVersionList()
@@ -43,36 +41,45 @@ public static partial class Search
         return UnrealNoPicFoundImagePath;
     }
 
-    private static void SortByDate(List<UnrealProject> list)
-    {
-        list.Sort((a, b) => string.Compare(b.LastAccessDate, a.LastAccessDate, StringComparison.Ordinal));
-    }
-
     private static void GetAllRecentlyOpenedProjects(List<UnrealProject> unrealProjectsList)
     {
-        List<string> editorSettingsPathList = [];
+        const string searchString = "RecentlyOpenedProjectFiles";
+        const string dateFormat = "yyyy.MM.dd-HH.mm.ss";
+        var entries = new List<(string ProjectName, DateTime LastOpenTime)>();
 
-        // Get all editor settings files from the engine version directories
-        editorSettingsPathList.AddRange(GetEngineVersionList().Select(dir => Path.Combine(dir, UnrealEditorSettingsPath)).Where(FileOps.IsFileExists));
+        List<string> configPathList = [];
+        configPathList.AddRange(GetEngineVersionList().Select(dir => Path.Combine(dir, UnrealEditorSettingsPath)).Where(FileOps.IsFileExists));
 
-        // Get all lines contains "RecentlyOpenedProjectFiles" from the editor settings files
-        foreach (var file in editorSettingsPathList)
+        var regex = FindNameAndDate();
+
+        Parallel.ForEach(configPathList, file =>
         {
-            foreach (var line in FileOps.ReadLines(file))
+            using var reader = new StreamReader(file);
+            while (reader.ReadLine() is { } line)
             {
-                var projectPathMatch = SearchProjectPath().Match(line);
+                if (!line.Contains(searchString)) continue;
+                var match = regex.Match(line);
+                if (!match.Success) continue;
 
-                if (!projectPathMatch.Success) continue;
-                // Check if the project path is valid
-                if (!FileOps.IsFileExists(projectPathMatch.Groups[1].Value)) continue;
-
-                unrealProjectsList.Add(
-                    new UnrealProject(
-                        GetAutoScreenshotPath(projectPathMatch.Groups[1].Value),
-                        projectPathMatch.Groups[1].Value
-                    ));
+                lock (entries)
+                {
+                    entries.Add((match.Groups[1].Value, DateTime.ParseExact(match.Groups[2].Value, dateFormat, null)));
+                }
             }
+        });
+
+        var results = entries
+            .GroupBy(e => e.ProjectName)
+            .Select(g => g.OrderByDescending(e => e.LastOpenTime)
+                .First())
+            .ToDictionary(e => e.ProjectName, e => e.LastOpenTime);
+
+        foreach (var kvp in results.Where(kvp => !FileOps.IsFileExists(kvp.Key)))
+        {
+            results.Remove(kvp.Key);
         }
+
+        unrealProjectsList.AddRange(results.Select(kvp => new UnrealProject(GetAutoScreenshotPath(kvp.Key), kvp.Key, kvp.Value.ToString("yyyy/MM/dd"))));
     }
 
     public static void RefreshListBox(ListBox projectListBox)
@@ -80,7 +87,6 @@ public static partial class Search
         List<UnrealProject> urealProjectsList = [];
 
         GetAllRecentlyOpenedProjects(urealProjectsList);
-        SortByDate(urealProjectsList);
 
         projectListBox.ItemsSource = urealProjectsList;
     }
@@ -100,8 +106,8 @@ public static partial class Search
         const string keyPath1 = @"Unreal.ProjectFile\shell\rungenproj\command";
         const string keyPath2 = @"Unreal.ProjectFile\shell\switchversion\command";
 
-        using var commandKey1 = Registry.ClassesRoot.OpenSubKey(keyPath1);
-        using var commandKey2 = Registry.ClassesRoot.OpenSubKey(keyPath2);
+        var commandKey1 = Platforms.WinOps.GetRegistryClassesRoot(keyPath1);
+        var commandKey2 = Platforms.WinOps.GetRegistryClassesRoot(keyPath2);
 
         if (commandKey1 == null || commandKey2 == null)
         {
@@ -123,7 +129,7 @@ public static partial class Search
 
         const string keyPath = @"SOFTWARE\EpicGames\Unreal Engine";
 
-        using var baseKey = Registry.LocalMachine.OpenSubKey(keyPath);
+        var baseKey = Platforms.WinOps.GetRegistryLocalMachine(keyPath);
 
         if (baseKey == null)
         {
@@ -135,7 +141,7 @@ public static partial class Search
         Array.Sort(subKeys, (a, b) => new Version(b).CompareTo(new Version(a)));
 
         // Get the UnrealEditor.exe path from the key value
-        using var subKeyValue = Registry.LocalMachine.OpenSubKey(Path.Combine(keyPath, subKeys[0]));
+        var subKeyValue = Platforms.WinOps.GetRegistryLocalMachine(Path.Combine(keyPath, subKeys[0]));
         if (subKeyValue == null)
         {
             return ExecResult<string>.Failed(ExecCode.RegeditNotFound);
@@ -154,7 +160,7 @@ public static partial class Search
     private static partial Regex SearchEnginePath();
 
     [GeneratedRegex("""
-                    ProjectName="([^"]+)"
+                    ProjectName="([^"]+)",LastOpenTime=([^)]+)
                     """)]
-    private static partial Regex SearchProjectPath();
+    private static partial Regex FindNameAndDate();
 }

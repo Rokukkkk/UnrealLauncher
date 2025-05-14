@@ -14,18 +14,11 @@ public enum ExecCode : ushort
 
 public struct Void;
 
-public struct ExecResult<T>
+public readonly struct ExecResult<T>(bool isSuccess, ExecCode execCode, T data)
 {
-    public bool IsSuccess { get; }
-    public ExecCode ExecCode { get; }
-    public T Data { get; }
-
-    private ExecResult(bool isSuccess, ExecCode execCode, T data)
-    {
-        IsSuccess = isSuccess;
-        ExecCode = execCode;
-        Data = data;
-    }
+    public bool IsSuccess { get; } = isSuccess;
+    public ExecCode ExecCode { get; } = execCode;
+    public T Data { get; } = data;
 
     public static ExecResult<T> Success(T data = default!) =>
         new(true, ExecCode.Success, data);

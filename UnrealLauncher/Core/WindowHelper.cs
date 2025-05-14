@@ -8,7 +8,20 @@ namespace UnrealLauncher.Core;
 
 public static class WindowHelper
 {
-    public static async Task PopMessageBox(Window window, string message)
+    public static bool Try<T>(Window window, ExecResult<T> result, out T value)
+    {
+        if (!result.IsSuccess)
+        {
+            _ = PopMessageBox(window, $"ErrCode: {result.ExecCode}");
+            value = default!;
+            return false;
+        }
+
+        value = result.Data;
+        return true;
+    }
+
+    private static async Task PopMessageBox(Window window, string message)
     {
         var messageBox = new MessageBox(message);
         await messageBox.ShowDialog(window);

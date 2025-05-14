@@ -1,0 +1,73 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:helpers="clr-namespace:UnrealLauncher.Core"
+             xmlns:conv="clr-namespace:UnrealLauncher.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UnrealLauncher.Views.ProjectsView">
+
+    <UserControl.Resources>
+        <conv:PathToBitmapConverter x:Key="PathToBitmapConverter" />
+    </UserControl.Resources>
+
+    <StackPanel>
+        <Grid ColumnDefinitions="Auto,Auto,*,Auto,20,Auto" Margin="28,28,28,46">
+            <TextBlock Grid.Column="0" Text="Projects" FontSize="28" />
+            <Button Classes="TopPanelButton" Grid.Column="3" Content="Open"
+                    Tapped="InputElement_AddProject_OnTapped" />
+            <Button Classes="TopPanelButton" Grid.Column="5" Content="New" Background="#3D77C2"
+                    Tapped="InputElement_NewProject_OnTapped" />
+        </Grid>
+        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
+        <Border Background="{StaticResource Background1Color}" Height="40">
+            <!-- Under development -->
+        </Border>
+        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
+
+        <Grid RowDefinitions="Auto,*">
+            <ListBox Classes="ProjectItem" Grid.Row="1" x:Name="ProjectsListBox"
+                     DoubleTapped="ProjectsListBox_OnDoubleTapped"
+                     Background="Transparent" Padding="12">
+
+                <ListBox.ContextMenu>
+                    <ContextMenu Classes="Menu">
+                        <MenuItem Classes="Menu" Header="Open" Click="MenuItem_Open_OnClick" />
+                        <MenuItem Classes="Menu" Header="Open in File Explorer"
+                                  Click="MenuItem_OpenInExplorer_OnClick" />
+                        <Separator Classes="Menu" />
+                        <MenuItem Classes="Menu" Header="Generate .sln file"
+                                  Click="MenuItem_GenerateVS_OnClick" />
+                        <MenuItem Classes="Menu" Header="Switch Unreal Engine version..."
+                                  Click="MenuItem_SwitchUEVersion_OnClick" />
+                        <Separator Classes="Menu" />
+                        <MenuItem Classes="Menu" Header="Delete cache folders" Click="MenuItem_Clear_OnClick" />
+                        <MenuItem Classes="Menu" Header="Delete" Click="MenuItem_Delete_OnClick"
+                                  Foreground="Red" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="helpers:Search+UnrealProject">
+                        <Grid ColumnDefinitions="Auto,20,*,20,Auto">
+                            <Border Grid.Column="0" CornerRadius="6" ClipToBounds="True">
+                                <Image Height="50" Width="50" Stretch="UniformToFill"
+                                       Source="{Binding ThumbnailPath, Mode=OneWay, Converter={StaticResource PathToBitmapConverter}}"
+                                       VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="{Binding UProjectName, Mode=OneWay}" Foreground="White" />
+                                <TextBlock Text="{Binding UProjectPath, Mode=OneWay}" Foreground="#A5A5A5" />
+                            </StackPanel>
+                            <Border Grid.Column="4" Width="80" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding LastAccessDate, Mode=OneWay}"
+                                           Foreground="#A5A5A5" HorizontalAlignment="Left" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+        </Grid>
+    </StackPanel>
+</UserControl>

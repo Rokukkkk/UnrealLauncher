@@ -1,0 +1,58 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia">
+
+    <Style Selector="Button.DeleteOverlay">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+        <Setter Property="Padding" Value="12,8,12,8" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.DeleteOverlay:pointerover ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+    </Style>
+
+    <Style Selector="Button.LeftPanelButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.LeftPanelButton:pointerover ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.LeftPanelButton:pressed ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.LeftPanelButton ic|FluentIcon">
+        <Setter Property="Foreground" Value="{StaticResource SubFontColor}" />
+    </Style>
+    <Style Selector="Button.LeftPanelButton:pressed ic|FluentIcon">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style Selector="Button.TopPanelButton">
+        <Setter Property="Width" Value="88" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.TopPanelButton:pointerover ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+    </Style>
+
+    <Style Selector="Button.AssetsTopPanelButton">
+        <Setter Property="Width" Value="140" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.AssetsTopPanelButton:pointerover ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+    </Style>
+</Styles>

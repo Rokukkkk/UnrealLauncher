@@ -7,7 +7,7 @@ namespace UnrealLauncher.Core;
 
 public static class FileOps
 {
-    public static ExecResult<Void> OpenProject(string? path)
+    public static ExecResult<Void> Open(string? path)
     {
         if (path == null)
         {
@@ -177,18 +177,8 @@ public static class FileOps
         return Path.GetFileNameWithoutExtension(path);
     }
 
-    public static string GetLastAccessTime(string path)
-    {
-        return File.GetLastAccessTime(path).ToString("yyyy/MM/dd");
-    }
-
     public static bool IsFileExists(string path)
     {
         return File.Exists(path);
-    }
-
-    public static IEnumerable<string> ReadLines(string path)
-    {
-        return File.ReadLines(path);
     }
 }

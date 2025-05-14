@@ -44,23 +44,8 @@
         <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
 
         <StackPanel Margin="20" Spacing="10">
-            <StackPanel.Styles>
-                <Style Selector="TextBox">
-                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
-                </Style>
-                <Style Selector="TextBox:focus Border">
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
-                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
-                </Style>
-                <Style Selector="TextBox:pointerover Border">
-                    <Setter Property="Background" Value="{StaticResource Background1Color}" />
-                </Style>
-            </StackPanel.Styles>
-
             <TextBlock Text="Error occured:" />
-            <TextBox x:Name="ErrorMessage" Text="Error Message" Height="54" FontSize="10"
-                     IsReadOnly="True" IsTabStop="False" BorderThickness="0" />
+            <SelectableTextBlock x:Name="ErrorMessage" Text="Error Message" Height="54" FontSize="10" />
 
             <Button Content="Close" Tapped="InputElement_CloseWindow_OnTapped" FontSize="12"
                     Background="{StaticResource ButtonBackground}"
