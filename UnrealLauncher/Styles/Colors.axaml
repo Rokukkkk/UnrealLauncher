@@ -10,4 +10,9 @@
     <Color x:Key="ButtonColor">#404040</Color>
     <Color x:Key="ButtonHoverColor">#575757</Color>
 
+    <Color x:Key="CaptionButtonColor">#333333</Color>
+    <Color x:Key="CaptionButtonPressedColor">#515151</Color>
+    <Color x:Key="CaptionButtonCloseButtonColor">#E81123</Color>
+    <Color x:Key="CaptionButtonCloseButtonPressedColor">#92121C</Color>
+
 </ResourceDictionary>

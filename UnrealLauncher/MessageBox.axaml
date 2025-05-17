@@ -20,7 +20,10 @@
 
                 <Button.Styles>
                     <Style Selector="Button:pointerover ContentPresenter">
-                        <Setter Property="Background" Value="Red" />
+                        <Setter Property="Background" Value="{StaticResource CaptionButtonCloseButtonColor}" />
+                    </Style>
+                    <Style Selector="Button:pressed ContentPresenter">
+                        <Setter Property="Background" Value="{StaticResource CaptionButtonCloseButtonPressedColor}" />
                     </Style>
                     <Style Selector="Button:not(:pointerover) ContentPresenter">
                         <Setter Property="Background" Value="Transparent" />
@@ -48,7 +51,6 @@
             <SelectableTextBlock x:Name="ErrorMessage" Text="Error Message" Height="54" FontSize="10" />
 
             <Button Content="Close" Tapped="InputElement_CloseWindow_OnTapped" FontSize="12"
-                    Background="{StaticResource ButtonBackground}"
                     HorizontalAlignment="Center" Margin="10" Padding="10,4" />
         </StackPanel>
     </StackPanel>

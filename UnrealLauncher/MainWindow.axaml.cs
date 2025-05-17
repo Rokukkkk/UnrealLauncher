@@ -14,6 +14,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Closing += OnWindowClosing;
+
         _projectsView = new ProjectsView();
         _assetsView = new AssetsView();
 
@@ -178,5 +180,11 @@ public partial class MainWindow : Window
         _projectsView.MenuItemSwitchUeVersionOnClick += MenuItem_SwitchUEVersion_OnClick;
         _projectsView.MenuItemClearOnClick += MenuItem_Clear_OnClick;
         _projectsView.MenuItemDeleteOnClick += MenuItem_Delete_OnClick;
+    }
+
+    private void OnWindowClosing(object? sender, WindowClosingEventArgs e)
+    {
+        e.Cancel = true;
+        Hide();
     }
 }

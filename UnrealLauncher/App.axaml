@@ -1,7 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="UnrealLauncher.App"
-             RequestedThemeVariant="Dark">
+             RequestedThemeVariant="Dark"
+             x:DataType="NativeMenu">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -14,8 +15,15 @@
     <Application.Styles>
         <FluentTheme />
 
-        <Style Selector="Button">
-            <Setter Property="Background" Value="#88333333" />
+        <Style Selector="CaptionButtons Button">
+            <Setter Property="Background" Value="{StaticResource CaptionButtonColor}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CaptionButtonPressedColor}" />
+        </Style>
+        <Style Selector="Button#PART_CloseButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource CaptionButtonCloseButtonColor}" />
+        </Style>
+        <Style Selector="Button#PART_CloseButton:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource CaptionButtonCloseButtonPressedColor}" />
         </Style>
 
         <StyleInclude Source="avares://UnrealLauncher/Styles/BorderStyles.axaml" />
@@ -23,17 +31,4 @@
         <StyleInclude Source="avares://UnrealLauncher/Styles/ListBoxStyles.axaml" />
         <StyleInclude Source="avares://UnrealLauncher/Styles/ContextMenuStyles.axaml" />
     </Application.Styles>
-
-    <!-- <TrayIcon.Icons> -->
-    <!--     <TrayIcons> -->
-    <!--         <TrayIcon ToolTipText="UnrealLauncher"> -->
-    <!--             <TrayIcon.Menu> -->
-    <!--                 <NativeMenu> -->
-    <!--                     <NativeMenuItem Header="Exit"> -->
-    <!--                     </NativeMenuItem> -->
-    <!--                 </NativeMenu> -->
-    <!--             </TrayIcon.Menu> -->
-    <!--         </TrayIcon> -->
-    <!--     </TrayIcons> -->
-    <!-- </TrayIcon.Icons> -->
 </Application>

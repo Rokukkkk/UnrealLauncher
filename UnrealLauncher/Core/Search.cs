@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 
 namespace UnrealLauncher.Core;
@@ -77,6 +78,13 @@ public static partial class Search
         foreach (var kvp in results.Where(kvp => !FileOps.IsFileExists(kvp.Key)))
         {
             results.Remove(kvp.Key);
+        }
+
+        // Send the projects info to the tray icon menu
+        {
+            var projects = results.Keys.ToArray();
+            var app = Application.Current as App;
+            app?.RefreshTrayIcon(projects);
         }
 
         unrealProjectsList.AddRange(results.Select(kvp => new UnrealProject(GetAutoScreenshotPath(kvp.Key), kvp.Key, kvp.Value.ToString("yyyy/MM/dd"))));
