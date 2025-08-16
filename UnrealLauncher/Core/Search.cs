@@ -48,17 +48,24 @@ public static partial class Search
         const string dateFormat = "yyyy.MM.dd-HH.mm.ss";
         var entries = new List<(string ProjectName, DateTime LastOpenTime)>();
 
-        List<string> configPathList = [];
-        configPathList.AddRange(GetEngineVersionList().Select(dir => Path.Combine(dir, UnrealEditorSettingsPath)).Where(FileOps.IsFileExists));
+        // Get config location
+        var configPathList = new List<string>();
+        configPathList.AddRange(
+            GetEngineVersionList()
+                .Select(dir => Path.Combine(dir, UnrealEditorSettingsPath))
+                .Where(FileOps.IsFileExists)
+        );
 
         var regex = FindNameAndDate();
 
+        // Read files
         Parallel.ForEach(configPathList, file =>
         {
             using var reader = new StreamReader(file);
             while (reader.ReadLine() is { } line)
             {
                 if (!line.Contains(searchString)) continue;
+
                 var match = regex.Match(line);
                 if (!match.Success) continue;
 
@@ -69,26 +76,31 @@ public static partial class Search
             }
         });
 
-        var results = entries
+        // Sort by last updated date
+        var latestProjects = entries
             .GroupBy(e => e.ProjectName)
-            .Select(g => g.OrderByDescending(e => e.LastOpenTime)
-                .First())
-            .ToDictionary(e => e.ProjectName, e => e.LastOpenTime);
+            .Select(g => g.OrderByDescending(e => e.LastOpenTime).First())
+            .Where(e => FileOps.IsFileExists(e.ProjectName)) 
+            .OrderByDescending(e => e.LastOpenTime) 
+            .ToList();
 
-        foreach (var kvp in results.Where(kvp => !FileOps.IsFileExists(kvp.Key)))
-        {
-            results.Remove(kvp.Key);
-        }
+        // Refresh tray menu
+        var projects = latestProjects.Select(e => e.ProjectName).ToArray();
+        var app = Application.Current as App;
+        app?.RefreshTrayIcon(projects);
 
-        // Send the projects info to the tray icon menu
-        {
-            var projects = results.Keys.ToArray();
-            var app = Application.Current as App;
-            app?.RefreshTrayIcon(projects);
-        }
-
-        unrealProjectsList.AddRange(results.Select(kvp => new UnrealProject(GetAutoScreenshotPath(kvp.Key), kvp.Key, kvp.Value.ToString("yyyy/MM/dd"))));
+        // Update unrealProjectsList
+        unrealProjectsList.AddRange(
+            latestProjects.Select(e =>
+                new UnrealProject(
+                    GetAutoScreenshotPath(e.ProjectName),
+                    e.ProjectName,
+                    e.LastOpenTime.ToString("yyyy/MM/dd")
+                )
+            )
+        );
     }
+
 
     public static void RefreshListBox(ListBox projectListBox)
     {
