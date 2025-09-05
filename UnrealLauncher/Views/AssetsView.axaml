@@ -6,23 +6,20 @@
              x:Class="UnrealLauncher.Views.AssetsView">
 
 
-    <StackPanel>
-        <Grid ColumnDefinitions="Auto,Auto,*,Auto,20,Auto" Margin="28,28,28,46">
+    <Grid RowDefinitions="Auto,1,50,1,*">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*,Auto,20,Auto" Margin="28,28,28,30">
             <TextBlock Grid.Column="0" Text="Assets" FontSize="28" />
-            <Button Classes="AssetsTopPanelButton" Grid.Column="5" Content="Open VaultCache" Background="#3D77C2"
+            <Button Classes="AssetsTopPanelButton" Grid.Column="5" Content="Open Folder"
                     Tapped="InputElement_OpenVaultCacheDirectory_OnTapped" />
         </Grid>
-        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
-        <Border Background="{StaticResource Background1Color}" Height="40">
+        <Border Grid.Row="1" Background="{StaticResource SeparatorColor}" />
+        <Border Grid.Row="2" Background="{StaticResource Background2Color}">
             <!-- Under development -->
         </Border>
-        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
+        <Border Grid.Row="3" Background="{StaticResource SeparatorColor}" />
 
-        <Grid RowDefinitions="Auto,*">
-            <ListBox Classes="ProjectItem" x:Name="AssetsListBox"
-                     Background="Transparent" Margin="20">
-
-            </ListBox>
-        </Grid>
-    </StackPanel>
+        <ListBox Grid.Row="4" Classes="ProjectItem" x:Name="AssetsListBox"
+                 Background="Transparent" Margin="20">
+        </ListBox>
+    </Grid>
 </UserControl>

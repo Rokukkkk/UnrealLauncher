@@ -3,10 +3,11 @@
         xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia">
 
     <Style Selector="Button.DeleteOverlay">
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
-        <Setter Property="Padding" Value="12,8,12,8" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="Button.DeleteOverlay:pointerover ContentPresenter">
@@ -31,28 +32,42 @@
     </Style>
 
     <Style Selector="Button.TopPanelButton">
-        <Setter Property="Width" Value="88" />
-        <Setter Property="Height" Value="36" />
+        <Setter Property="Width" Value="80" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="Button.TopPanelButton:pointerover ContentPresenter">
         <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
     </Style>
-
-    <Style Selector="Button.AssetsTopPanelButton">
-        <Setter Property="Width" Value="140" />
-        <Setter Property="Height" Value="36" />
+    <Style Selector="Button.TopPanelButtonBlue">
+        <Setter Property="Width" Value="80" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource SeparatorColor}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background" Value="{StaticResource ThemeBlueColor}" />
+    </Style>
+    <Style Selector="Button.TopPanelButtonBlue:pointerover ContentPresenter">
+        <Setter Property="Background" Value="#1361AD" />
+    </Style>
+
+    <Style Selector="Button.AssetsTopPanelButton">
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background" Value="{StaticResource ThemeBlueColor}" />
     </Style>
     <Style Selector="Button.AssetsTopPanelButton:pointerover ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+        <Setter Property="Background" Value="#1361AD" />
     </Style>
 </Styles>

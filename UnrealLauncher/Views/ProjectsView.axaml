@@ -11,21 +11,21 @@
         <conv:PathToBitmapConverter x:Key="PathToBitmapConverter" />
     </UserControl.Resources>
 
-    <StackPanel>
-        <Grid ColumnDefinitions="Auto,Auto,*,Auto,20,Auto" Margin="28,28,28,46">
+    <Grid RowDefinitions="Auto,1,50,1,*">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*,Auto,20,Auto" Margin="28,28,28,30">
             <TextBlock Grid.Column="0" Text="Projects" FontSize="28" />
             <Button Classes="TopPanelButton" Grid.Column="3" Content="Open"
                     Tapped="InputElement_AddProject_OnTapped" />
-            <Button Classes="TopPanelButton" Grid.Column="5" Content="New" Background="#3D77C2"
+            <Button Classes="TopPanelButtonBlue" Grid.Column="5" Content="+ New"
                     Tapped="InputElement_NewProject_OnTapped" />
         </Grid>
-        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
-        <Border Background="{StaticResource Background1Color}" Height="40">
+        <Border Grid.Row="1" Background="{StaticResource SeparatorColor}" />
+        <Border Grid.Row="2" Background="{StaticResource Background2Color}">
             <!-- Under development -->
         </Border>
-        <Border Background="{StaticResource SeparatorColor}" Height="0.1" />
+        <Border Grid.Row="3" Background="{StaticResource SeparatorColor}" />
 
-        <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="4" RowDefinitions="Auto,*">
             <ListBox Classes="ProjectItem" Grid.Row="1" x:Name="ProjectsListBox"
                      DoubleTapped="ProjectsListBox_OnDoubleTapped"
                      Background="Transparent" Padding="12">
@@ -38,7 +38,7 @@
                         <Separator Classes="Menu" />
                         <MenuItem Classes="Menu" Header="Generate .sln file"
                                   Click="MenuItem_GenerateVS_OnClick" />
-                        <MenuItem Classes="Menu" Header="Switch Unreal Engine version..."
+                        <MenuItem Classes="Menu" Header="Switch UE version..."
                                   Click="MenuItem_SwitchUEVersion_OnClick" />
                         <Separator Classes="Menu" />
                         <MenuItem Classes="Menu" Header="Delete cache folders" Click="MenuItem_Clear_OnClick" />
@@ -69,5 +69,5 @@
 
             </ListBox>
         </Grid>
-    </StackPanel>
+    </Grid>
 </UserControl>

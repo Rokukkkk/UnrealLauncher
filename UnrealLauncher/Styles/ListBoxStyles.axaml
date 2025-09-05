@@ -3,19 +3,19 @@
         xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia">
 
     <Style Selector="ListBox.LeftPanelItem ListBoxItem:selected ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource Background2Color}" />
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
         <Setter Property="CornerRadius" Value="6" />
     </Style>
     <Style Selector="ListBox.LeftPanelItem ListBoxItem:pointerover  ContentPresenter">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
+        <Setter Property="CornerRadius" Value="6" />
     </Style>
     <Style Selector="ListBox.LeftPanelItem ListBoxItem:selected:pointerover ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource Background2Color}" />
+        <Setter Property="Background" Value="{StaticResource ButtonHoverColor}" />
     </Style>
     <Style Selector="ListBox.LeftPanelItem ListBoxItem">
         <Setter Property="Margin" Value="10,2,10,2" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Width" Value="140" />
+        <Setter Property="Padding" Value="5" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Cursor" Value="Hand" />
@@ -29,6 +29,8 @@
         <Setter Property="Margin" Value="0,2,0,0" />
         <Setter Property="IconVariant" Value="Filled" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="#7B7B7B" />
     </Style>
     <Style Selector="ListBox.LeftPanelItem ListBoxItem StackPanel TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />

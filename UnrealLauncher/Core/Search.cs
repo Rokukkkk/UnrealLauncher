@@ -102,13 +102,13 @@ public static partial class Search
     }
 
 
-    public static void RefreshListBox(ListBox projectListBox)
+    public static void RefreshListBox(ListBox? projectListBox)
     {
         List<UnrealProject> urealProjectsList = [];
 
         GetAllRecentlyOpenedProjects(urealProjectsList);
 
-        projectListBox.ItemsSource = urealProjectsList;
+        if (projectListBox != null) projectListBox.ItemsSource = urealProjectsList;
     }
 
     public static string GetSelectedProjectPath(ListBox projectsListBox)

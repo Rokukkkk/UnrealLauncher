@@ -6,10 +6,10 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="UnrealLauncher.MainWindow"
         WindowStartupLocation="CenterScreen"
-        Width="1000" Height="560" Icon="Assets/icon.ico"
-        MinWidth="1000" MinHeight="560"
+        Width="1010" Height="560" Icon="Assets/icon.ico"
+        MinWidth="1010" MinHeight="560"
         Title="UnrealLauncher" Background="{StaticResource Background0Color}"
-        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="Default" 
         ExtendClientAreaTitleBarHeightHint="-1">
 
     <Panel>
@@ -25,59 +25,62 @@
 
             <Border Classes="MainBorder" Background="{StaticResource Background0Color}"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Width="500" Height="200" Tapped="InputElement_Messagebox_OnTapped">
+                    Width="600" Height="200" Tapped="InputElement_Messagebox_OnTapped">
 
-                <Grid Margin="24" RowDefinitions="Auto,10,Auto,*,Auto">
-                    <TextBlock Grid.Row="0" Text="Remove the project?" FontSize="18" />
-                    <TextBlock Grid.Row="2" Text="This will delete all the files inside the project folder."
-                               FontSize="16"
+                <Grid RowDefinitions="Auto,10,Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="Delete this project?" FontSize="18" FontWeight="DemiBold"
+                               Padding="20, 14, 20, 12" />
+                    <Border Grid.Row="1" Background="{StaticResource SeparatorColor}" Height="0.1" />
+                    <TextBlock Grid.Row="2" Text="This will delete all the files including the project folder."
+                               FontSize="15" Padding="20, 10, 20, 16"
                                Foreground="{StaticResource SubFontColor}" />
-                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="20" HorizontalAlignment="Right">
+                    <Border Grid.Row="3" Background="{StaticResource SeparatorColor}" Height="0.1" />
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="20" HorizontalAlignment="Right"
+                                Margin="0, 0, 20, 18">
                         <Button Classes="DeleteOverlay" Content="Cancel" Tapped="InputElement_ButtonClose_OnTapped" />
                         <Button Classes="DeleteOverlay" Content="Delete" Tapped="InputElement_ButtonDelete_OnTapped"
-                                Foreground="Red" />
+                                Background="DarkRed" BorderBrush="DarkRed" />
                     </StackPanel>
                 </Grid>
             </Border>
         </Border>
 
         <DockPanel>
-            <TextBlock Text="Unreal Launcher" FontSize="12.5" Padding="10,10,0,0" DockPanel.Dock="Top"
-                       Background="{StaticResource Background0Color}"
-                       Foreground="{StaticResource SubFontColor}"
-                       Height="32" FontWeight="SemiBold" IsHitTestVisible="False" ZIndex="999" />
+            <Border DockPanel.Dock="Top" ZIndex="999" IsHitTestVisible="False">
+                <TextBlock Text="" FontSize="12.5" Padding="10,10,0,0"
+                           Background="{StaticResource Background0Color}"
+                           Foreground="{StaticResource SubFontColor}"
+                           Height="40" FontWeight="SemiBold"/>
+            </Border>
             <Border DockPanel.Dock="Top" Background="{StaticResource SeparatorColor}" Height="0.1" />
 
             <Grid DockPanel.Dock="Left" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto"
                   Background="{StaticResource Background1Color}">
-                <Grid Grid.Row="0" Background="{StaticResource Background1Color}" Height="70">
-                    <Button Classes="LeftPanelButton" VerticalAlignment="Center" HorizontalAlignment="Right"
-                            Margin="0,0,12,0"
+                <Grid Grid.Row="0" Background="{StaticResource Background1Color}">
+                    <Button Classes="LeftPanelButton" VerticalAlignment="Center" Margin="4,12,0,0"
+                            Content="UE Launcher" FontWeight="Bold" FontSize="20"
                             Tapped="InputElement_Refresh_OnTapped">
-                        <ic:FluentIcon Icon="ArrowSync" IconVariant="Filled"
-                                       VerticalAlignment="Center" HorizontalAlignment="Right" />
                     </Button>
                 </Grid>
-                <Border Grid.Row="1" Background="{StaticResource SeparatorColor}" Height="0.1" />
-                <ListBox Classes="LeftPanelItem" x:Name="Tabs" Grid.Row="2" Padding="16" Background="Transparent"
+                <ListBox Classes="LeftPanelItem" x:Name="Tabs" Grid.Row="3" Padding="0, 10, 0, 10"
+                         Background="Transparent" Width="223"
                          SelectionMode="Single" SelectedIndex="0" Loaded="Tabs_OnLoaded">
                     <ListBoxItem Tag="Projects">
                         <StackPanel Tag="Projects">
-                            <ic:FluentIcon Icon="Box" />
+                            <ic:FluentIcon Icon="FolderList" />
                             <TextBlock Text="Projects" />
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Tag="Assets">
                         <StackPanel>
-                            <ic:FluentIcon Icon="Folder" />
-                            <TextBlock Text="Assets" />
+                            <ic:FluentIcon Icon="Vault" />
+                            <TextBlock Text="VaultCache" />
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>
 
-                <Border Grid.Row="4" Background="{StaticResource SeparatorColor}" Height="0.1" />
-                <Grid Grid.Row="5" Background="{StaticResource Background1Color}" Height="40">
-                    <TextBlock Text="Ver. 0.0.5" VerticalAlignment="Center" HorizontalAlignment="Right"
+                <Grid Grid.Row="5" Background="{StaticResource Background0Color}" Height="40">
+                    <TextBlock Text="Ver. 0.1.0" VerticalAlignment="Center" HorizontalAlignment="Right"
                                Margin="0,0,20,0" Foreground="{StaticResource SubFontColor}"
                                TextDecorations="Underline" Cursor="Hand"
                                FontSize="12" Tapped="InputElement_Version_OnTapped" />

@@ -30,6 +30,8 @@ public partial class MainWindow : Window
         WindowHelper.Try(this, FileOps.Open(Search.GetSelectedProjectPath(_projectsView.ProjectsListBox)), out _);
 
         _projectsView.ProjectsListBox.SelectedItem = null;
+
+        Search.RefreshListBox(_projectsView.ProjectsListBox);
     }
 
     private void MenuItem_Open_OnClick(object? sender, RoutedEventArgs e)
@@ -37,6 +39,8 @@ public partial class MainWindow : Window
         WindowHelper.Try(this, FileOps.Open(Search.GetSelectedProjectPath(_projectsView.ProjectsListBox)), out _);
 
         _projectsView.ProjectsListBox.SelectedItem = null;
+
+        Search.RefreshListBox(_projectsView.ProjectsListBox);
     }
 
     private void MenuItem_Delete_OnClick(object? sender, RoutedEventArgs e)
