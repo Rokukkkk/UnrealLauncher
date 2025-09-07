@@ -1,6 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Reactive;
 using UnrealLauncher.Core;
 using UnrealLauncher.Views;
 
@@ -15,6 +17,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Closing += OnWindowClosing;
+
+        var observer = new AnonymousObserver<WindowState>(state => { WindowControlSpacer.Width = state == WindowState.Maximized ? 144 : 138; });
+        this.GetObservable(WindowStateProperty).Subscribe(observer);
 
         _projectsView = new ProjectsView();
         _assetsView = new AssetsView();

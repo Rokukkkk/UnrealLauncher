@@ -9,13 +9,13 @@
         Width="1010" Height="560" Icon="Assets/icon.ico"
         MinWidth="1010" MinHeight="560"
         Title="UnrealLauncher" Background="{StaticResource Background0Color}"
-        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="Default" 
-        ExtendClientAreaTitleBarHeightHint="-1">
+        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="Default"
+        ExtendClientAreaTitleBarHeightHint="40">
 
     <Panel>
         <Border x:Name="Overlay"
                 Background="{StaticResource BackgroundTransparentColor}"
-                ZIndex="999" Margin="0,32,0,0" Opacity="0" IsHitTestVisible="False"
+                ZIndex="999" Margin="0,40,0,0" Opacity="0" IsHitTestVisible="False"
                 Tapped="InputElement_Overlay_OnTapped">
             <Border.Transitions>
                 <Transitions>
@@ -46,12 +46,11 @@
         </Border>
 
         <DockPanel>
-            <Border DockPanel.Dock="Top" ZIndex="999" IsHitTestVisible="False">
-                <TextBlock Text="" FontSize="12.5" Padding="10,10,0,0"
-                           Background="{StaticResource Background0Color}"
-                           Foreground="{StaticResource SubFontColor}"
-                           Height="40" FontWeight="SemiBold"/>
-            </Border>
+            <DockPanel DockPanel.Dock="Top" ZIndex="999" IsHitTestVisible="False" Height="40"
+                       HorizontalAlignment="Right">
+                <Panel x:Name="WindowControlSpacer" DockPanel.Dock="Right" Background="Transparent" Width="138" />
+                <Border DockPanel.Dock="Right" Background="{StaticResource SeparatorColor}" Width="0.1" />
+            </DockPanel>
             <Border DockPanel.Dock="Top" Background="{StaticResource SeparatorColor}" Height="0.1" />
 
             <Grid DockPanel.Dock="Left" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto"
@@ -80,7 +79,7 @@
                 </ListBox>
 
                 <Grid Grid.Row="5" Background="{StaticResource Background0Color}" Height="40">
-                    <TextBlock Text="Ver. 0.1.0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                    <TextBlock Text="Ver. 0.1.1" VerticalAlignment="Center" HorizontalAlignment="Right"
                                Margin="0,0,20,0" Foreground="{StaticResource SubFontColor}"
                                TextDecorations="Underline" Cursor="Hand"
                                FontSize="12" Tapped="InputElement_Version_OnTapped" />

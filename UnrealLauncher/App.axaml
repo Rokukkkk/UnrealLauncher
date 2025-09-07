@@ -15,9 +15,14 @@
     <Application.Styles>
         <FluentTheme />
 
+        <Style Selector="CaptionButtons">
+            <Setter Property="MaxHeight" Value="40" />
+            <Setter Property="Height" Value="40" />
+        </Style>
         <Style Selector="CaptionButtons Button">
             <Setter Property="Background" Value="{StaticResource CaptionButtonColor}" />
             <Setter Property="BorderBrush" Value="{StaticResource CaptionButtonPressedColor}" />
+            <Setter Property="Height" Value="40" />
         </Style>
         <Style Selector="Button#PART_CloseButton:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="{StaticResource CaptionButtonCloseButtonColor}" />

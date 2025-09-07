@@ -15,9 +15,8 @@ class Program
     public static void Main(string[] args)
     {
         const string mutexName = "UnrealLauncher_SingleInstance";
-        bool createdNew;
 
-        _mutex = new Mutex(true, mutexName, out createdNew);
+        _mutex = new Mutex(true, mutexName, out var createdNew);
 
         if (!createdNew)
         {
